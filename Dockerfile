@@ -1,5 +1,8 @@
-# Use an official Maven image to build the project
-FROM maven:3.8.4-openjdk-21 AS build
+# Use OpenJDK 21 as the base image for building the project
+FROM openjdk:21 AS build
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -10,7 +13,7 @@ COPY . .
 # Run the Maven build to package the application
 RUN mvn clean install -DskipTests
 
-# Use OpenJDK as the runtime image
+# Use OpenJDK 21 as the runtime image
 FROM openjdk:21-jre-slim
 
 # Set the working directory inside the container
@@ -23,4 +26,4 @@ COPY --from=build /app/target/hotel-booking-backend.jar /app/hotel-booking-backe
 EXPOSE 4040
 
 # Run the Java application
-CMD ["java", "-jar", "hotel-booking-backend"]
+CMD ["java", "-jar", "hotel-booking-backend.jar"]
